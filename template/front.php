@@ -28,6 +28,12 @@ switch ($page) {
         require 'podcasts_r.php';
         break;
     
+    case 'all_podcasts':
+        $podcasts = new podcasts($pdo, $session);
+        $p = $podcasts->get_podcasts();
+        print_r ($p);
+        break;
+    
     case 'promote_podcasts':
         $promote_podcasts = new podcasts ($pdo, $session);
         $result = $promote_podcasts->get_promote_podcasts();

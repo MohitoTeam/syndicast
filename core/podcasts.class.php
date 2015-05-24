@@ -9,6 +9,30 @@ class podcasts {
             $this->pdo = $pdo;
     }
 
+    public function get_promote_podcasts() {
+        $approve = '1';
+        $promotion = '1';
+        $stmt = $this->pdo->prepare('SELECT id, artist_id, title, img, length, bitrate FROM podcasts WHERE  approve = :approve AND promotion=1');
+        $stmt->bindParam(':approve', $approve, PDO::PARAM_STR);
+        $stmt->execute();
+        $result = $stmt->fetchAll();
+
+        $final = '<script src="//api.html5media.info/1.1.8/html5media.min.js"></script>';
+
+        foreach ($result as $tmp) {
+            $stmt = $this->pdo->prepare('SELECT login FROM users WHERE id = :id');
+            $stmt->bindParam(':id', $tmp['artist_id'], PDO::PARAM_STR);
+            $stmt->execute();
+
+            $result2 = $stmt->fetch();
+            $final .= $tmp['title'] . "<br>";
+            $final .= '<img src="podcasts/' . $result2['login'] . '/' . $tmp['img'] . '.jpg" height=200px width=200px> <br> 
+                <audio src="podcasts/' . $result2['login'] . '/' . $tmp['img'] . '.mp3" controls preload></audio><br><br>
+';
+        }
+        return $final;
+    }
+
     public function get_my_podcasts() {
 
         $approve = '1';
@@ -101,11 +125,11 @@ class podcasts {
         $final2 .= 'Sortuj wg: <br> <a href="index.php?page=new_r_podcasts&sort=title"> tytulu </a>';
         $allowed = array('title', 'artist_id');
 
-        if (isset($_GET['sort']) && ($_GET['sort'] != NULL) && in_array($_GET['sort'], $allowed)){
-            $sort_by = 'ORDER BY '.$_GET['sort'];
+        if (isset($_GET['sort']) && ($_GET['sort'] != NULL) && in_array($_GET['sort'], $allowed)) {
+            $sort_by = 'ORDER BY ' . $_GET['sort'];
             //echo 'lol';
         }
-        
+
         foreach ($final as $tmp) {
             $approve = '1';
             $stmt = $this->pdo->prepare("SELECT artist_id, title, img, length, bitrate FROM podcasts WHERE id = :id AND approve = :approve");
@@ -123,27 +147,26 @@ class podcasts {
             $result2 = $stmt->fetchAll(PDO::FETCH_ASSOC);
             $t[] = $result;
 
-            
+
             $final2 .= $result[0]['title'] . "<br>";
             $final2 .= '<img src="podcasts/' . $result2[0]['login'] . '/' . $result[0]['img'] . '.jpg" height=200px width=200px> <br> 
                 <audio src="podcasts/' . $result2[0]['login'] . '/' . $result[0]['img'] . '.mp3" controls preload></audio><br><br>
 ';
-
         }
         /*
-        foreach ($t[0][0] as $single){
-            $x[] = $single;
-            //echo $single;
-        }
-        
-        print_r ($x);
-        //asort ($t[0][0]);
-        //print_r ($t);
-        echo '---------------------------------------------------------------';
-        //print_r ($t[0]);
+          foreach ($t[0][0] as $single){
+          $x[] = $single;
+          //echo $single;
+          }
+
+          print_r ($x);
+          //asort ($t[0][0]);
+          //print_r ($t);
+          echo '---------------------------------------------------------------';
+          //print_r ($t[0]);
          * */
-        
-         
+
+
         return $final2;
     }
 

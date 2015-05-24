@@ -27,6 +27,12 @@ switch ($page) {
     case 'podcasts_r':
         require 'podcasts_r.php';
         break;
+    
+    case 'promote_podcasts':
+        $promote_podcasts = new podcasts ($pdo, $session);
+        $result = $promote_podcasts->get_promote_podcasts();
+        print_r($result);
+        break;
 
     case 'my_podcasts':
         $podcasts = new podcasts($pdo, $session);

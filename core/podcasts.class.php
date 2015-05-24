@@ -5,13 +5,41 @@ class podcasts {
     private $pdo;
 
     public function __construct($pdo) {
-        if (isset($pdo) && is_object($pdo))
+        if (isset($pdo) && is_object($pdo)) {
             $this->pdo = $pdo;
+        }
+    }
+
+    public function get_subscribed_podcasts() {
+        $active = '1';
+        $stmt = $this->pdo->prepare('SELECT id, user_id, podcast_id FROM subscribed_podcasts WHERE  active = :approve');
+        $stmt->bindParam(':approve', $active, PDO::PARAM_STR);
+        $stmt->execute();
+        $result = $stmt->fetchAll();
+
+        $final = '<script src="//api.html5media.info/1.1.8/html5media.min.js"></script>';
+
+        foreach ($result as $tmp) {
+            $stmt = $this->pdo->prepare('SELECT login FROM users WHERE id = :id');
+            $stmt->bindParam(':id', $tmp['user_id'], PDO::PARAM_STR);
+            $stmt->execute();
+            $result2 = $stmt->fetch();
+            
+            $stmt = $this->pdo->prepare('SELECT title, img FROM podcasts WHERE id = :id');
+            $stmt->bindParam(':id', $tmp['podcast_id'], PDO::PARAM_STR);
+            $stmt->execute();
+            $tmp2 = $stmt->fetch();
+            
+            $final .= $tmp2['title'] . "<br>";
+            $final .= '<img src="podcasts/' . $result2['login'] . '/' . $tmp2['img'] . '.jpg" height=200px width=200px> <br> 
+                <audio src="podcasts/' . $result2['login'] . '/' . $tmp2['img'] . '.mp3" controls preload></audio><br><br>
+';
+        }
+        return $final;
     }
 
     public function get_promote_podcasts() {
         $approve = '1';
-        $promotion = '1';
         $stmt = $this->pdo->prepare('SELECT id, artist_id, title, img, length, bitrate FROM podcasts WHERE  approve = :approve AND promotion=1');
         $stmt->bindParam(':approve', $approve, PDO::PARAM_STR);
         $stmt->execute();

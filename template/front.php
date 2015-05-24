@@ -27,15 +27,21 @@ switch ($page) {
     case 'podcasts_r':
         require 'podcasts_r.php';
         break;
-    
+
     case 'all_podcasts':
         $podcasts = new podcasts($pdo, $session);
         $p = $podcasts->get_podcasts();
-        print_r ($p);
+        print_r($p);
         break;
     
+    case 'my_subscribed':
+        $podcasts = new podcasts($pdo, $session);
+        $p = $podcasts->get_subscribed_podcasts();
+        print_r($p);
+        break;
+
     case 'promote_podcasts':
-        $promote_podcasts = new podcasts ($pdo, $session);
+        $promote_podcasts = new podcasts($pdo, $session);
         $result = $promote_podcasts->get_promote_podcasts();
         print_r($result);
         break;
@@ -61,21 +67,21 @@ switch ($page) {
     case 'promotion_r':
         require 'promotion.php';
         break;
-    
+
     case 'finance':
         require 'finance.php';
         break;
-    
+
     case 'tracks_archive':
-        $podcasts = new podcasts ($pdo, $session);
+        $podcasts = new podcasts($pdo, $session);
         $result = $podcasts->get_archives_tracks();
-        print_r ($result);
+        print_r($result);
         break;
-    
+
     case 'my_tracks':
         //require 'my_tracks.php';
         $podcasts = new podcasts($pdo, $session);
-        $result = $podcasts -> get_my_tracks();
+        $result = $podcasts->get_my_tracks();
         print_r($result);
         break;
 
@@ -114,12 +120,12 @@ switch ($page) {
     case 'add_track':
         require 'add_track.php';
         break;
-    
+
     case 'new_r_podcasts':
         //$r = new auth($pdo, null);
         $podcasts = new podcasts($pdo, $session);
         $p = $podcasts->get_podcasts();
-        print_r ($p);
+        print_r($p);
         break;
 
     case 'register_action': {
